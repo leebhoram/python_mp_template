@@ -28,7 +28,7 @@ def run():
             np.zeros(data_shape, dtype=data_dtype),
         ) as proc:
 
-            assert proc.is_ready()
+            assert proc.is_ready
 
             while True:
                 try:

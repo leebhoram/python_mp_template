@@ -57,6 +57,7 @@ class BaseProc(mp.Process):
         self.launch_timeout = timeout
         self.ready_event = mp.Event()
         self.stop_event = mp.Event()
+        self.verbose = verbose
 
     # context manager
     def __enter__(self):
@@ -99,7 +100,7 @@ class BaseProc(mp.Process):
         try:
             self.input_queue.put(input_data)
         except excFull:
-            if verbose:
+            if self.verbose:
                 print("input queue is full! failed to put new data.")
             pass
 
@@ -113,7 +114,7 @@ class BaseProc(mp.Process):
                 output_list = self.output_queue.get_k(k=k)["data"]
             output_len = len(output_list)
         except excEmpty:
-            if verbose:
+            if self.verbose:
                 print("output queue is empty! returning empty list.")
             pass
         finally:
@@ -163,7 +164,7 @@ class BaseProc(mp.Process):
                 try:
                     self.output_queue.put(output_data)
                 except excFull:
-                    if verbose:
+                    if self.verbose:
                         print("output queue is full! failed to put new output.")
 
             if not started:
@@ -172,5 +173,5 @@ class BaseProc(mp.Process):
 
             time.sleep(0.01)
 
-        if verbose:
+        if self.verbose:
             print("exiting the main loop.")
