@@ -107,7 +107,7 @@ class SharedMemoryQueue:
 
         # update idx
         self.write_counter.add(1)
-    
+
     def get(self, out=None) -> Dict[str, np.ndarray]:
         write_count = self.write_counter.load()
         read_count = self.read_counter.load()
@@ -133,7 +133,9 @@ class SharedMemoryQueue:
         n_data = write_count - read_count
         if n_data <= 0:
             raise Empty()
-        assert k <= n_data
+        # instead of raising an error, just bound to the limit.
+        if k > n_data:
+            k = n_data
 
         out = self._get_k_impl(k, read_count, out=out)
         self.read_counter.add(k)
